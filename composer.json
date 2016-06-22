@@ -1,0 +1,28 @@
+{
+    "name": "oprokidnev/cacheable-placeholder",
+    "description": "",
+    "type": "library",
+    "keywords": [
+        "placeholder",
+        "rendering",
+        "zendframework",
+        "zf2",
+        "optimization"
+    ],
+    "homepage": "https://github.com/oprokidnev/CacheablePlaceholder",
+    "authors": [
+        {
+            "name": "Andrey Oprokidnev",
+            "email": "aa@oprokidnev.ru"
+        }
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-mvc": "^2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Oprokidnev\\CacheablePlaceholder\\": "src/Oprokidnev/CacheablePlaceholder"
+        }
+    }
+}
