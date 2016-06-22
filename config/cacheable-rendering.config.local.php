@@ -36,32 +36,11 @@ $defaultAdapter = [
 ];
 
 return [
-    'service_manager' => [
-    ],
-    'view_helpers' => [
-        'factories' => [
-            'cachedCallback' => [ View\Helper\Callback::class, 'createViaViewHelperManager'],
-            'cachedPartial' => [ View\Helper\Partial::class, 'createViaViewHelperManager'],
-        ],
-        'delegators' => [
-            'headScript' => [
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
-            ],
-            'headLink' => [
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
-            ],
-            'headStyle' => [
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
-            ],
-            'headMeta' => [
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
-            ],
-            'inlineScript' => [
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
-            ],
-            'placeholder' => [
-                View\Helper\Placeholder\PlaceholderDelegatorFactory::class,
-                View\Helper\Placeholder\TrackableContainerDelegatorFactory::class,
+    'oprokidnev' => [
+        'cacheable-rendering' => [
+            'adapters' => [
+                View\Helper\Callback::class => $defaultAdapter,
+                View\Helper\Partial::class => $defaultAdapter,
             ],
         ],
     ],

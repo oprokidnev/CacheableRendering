@@ -7,7 +7,8 @@
         "rendering",
         "zendframework",
         "zf2",
-        "optimization"
+        "optimization",
+        "cacheing"
     ],
     "homepage": "https://github.com/oprokidnev/CacheableRendering",
     "authors": [
@@ -18,7 +19,8 @@
     ],
     "require": {
         "php": "^5.5 || ^7.0",
-        "zendframework/zend-mvc": "^2.5"
+        "zendframework/zend-mvc": "^2.5",
+        "zendframework/zend-cache": "^2.5"
     },
     "autoload": {
         "psr-4": {

@@ -19,9 +19,43 @@
 
 namespace Oprokidnev\CacheableRendering;
 
-
 class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
 {
+
+    /**
+     * @param \Zend\ModuleManager\ModuleManager $moduleManager
+     */
+    public function init(\Zend\ModuleManager\ModuleManager $moduleManager)
+    {
+        $events = $moduleManager->getEventManager();
+
+        /**
+         * Append lazy services config
+         */
+        $events->attach(\Zend\ModuleManager\ModuleEvent::EVENT_MERGE_CONFIG,
+            [$this, 'onMergeConfig']);
+    }
+
+    /**
+     *
+     * @param \Zend\ModuleManager\ModuleEvent $e
+     */
+    public function onMergeConfig(\Zend\ModuleManager\ModuleEvent $e)
+    {
+        $cacheConfigLocation = './config/autoload/cacheable-rendering.config.local.php';
+        if (!file_exists($cacheConfigLocation)) {
+            copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php',
+                $cacheConfigLocation);
+            mkdir('data/cacheable-rendering');
+            $cacheConfig    = require $cacheConfigLocation;
+            $configListener = $e->getConfigListener();
+
+            $config = \Zend\Stdlib\ArrayUtils::merge($configListener->getMergedConfig(false),
+                    $cacheConfig);
+
+            $configListener->setMergedConfig($config);
+        }
+    }
 
     /**
      *
@@ -31,5 +65,4 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
     {
         return include __DIR__ . '/../../../config/module.config.php';
     }
-
 }
