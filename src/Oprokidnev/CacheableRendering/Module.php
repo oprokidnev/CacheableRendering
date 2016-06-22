@@ -19,6 +19,7 @@
 
 namespace Oprokidnev\CacheablePlaceholder;
 
+
 class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
 {
 

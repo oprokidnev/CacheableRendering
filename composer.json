@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Oprokidnev\\CacheablePlaceholder\\": "src/Oprokidnev/CacheablePlaceholder"
+            "Oprokidnev\\CacheableRendering\\": "src/Oprokidnev/CacheableRendering"
         }
     }
 }
