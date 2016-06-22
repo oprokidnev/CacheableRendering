@@ -17,7 +17,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace Oprokidnev\CacheablePlaceholder;
+namespace Oprokidnev\CacheableRendering;
 
 
 class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface

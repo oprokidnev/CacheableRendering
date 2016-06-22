@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace Oprokidnev\CacheablePlaceholder;
+namespace Oprokidnev\CacheableRendering;
 
 return [
     'view_helpers'=>[

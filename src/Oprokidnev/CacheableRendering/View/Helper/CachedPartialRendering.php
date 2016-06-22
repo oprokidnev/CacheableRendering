@@ -1,6 +1,6 @@
 <?php
 
-namespace Oprokidnev\CacheablePlaceholder\View\Helper;
+namespace Oprokidnev\CacheableRendering\View\Helper;
 
 /**
  * Description of CachedPartialRendering
