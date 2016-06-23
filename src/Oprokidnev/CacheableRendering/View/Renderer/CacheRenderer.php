@@ -1,5 +1,22 @@
 <?php
 
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license.
+ */
+
 namespace Oprokidnev\CacheableRendering\View\Renderer;
 
 \Zend\View\Renderer\PhpRenderer::class;
@@ -46,12 +63,12 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
 
     public function getEngine()
     {
-        return null;
+        return;
     }
 
     public function render($nameOrModel, $values = null)
     {
-        if ($nameOrModel instanceof \Zend\View\Model\ModelInterface && ( $cacheKey = $nameOrModel->getVariable(\Oprokidnev\CacheableRendering\View\Model\CacheModelInterface::CACHE_PARAMETER_NAME) ) !== null) {
+        if ($nameOrModel instanceof \Zend\View\Model\ModelInterface && ($cacheKey = $nameOrModel->getVariable(\Oprokidnev\CacheableRendering\View\Model\CacheModelInterface::CACHE_PARAMETER_NAME)) !== null) {
 
             /**
              * Prevent loop renderer use.
@@ -68,7 +85,7 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
             $renderer = null;
 
             $callbackHandler = $this->view->getEventManager()
-                ->attach(\Zend\View\ViewEvent::EVENT_RENDERER_POST, function(\Zend\View\ViewEvent $event) use(&$renderer, &$callbackHandler) {
+                ->attach(\Zend\View\ViewEvent::EVENT_RENDERER_POST, function (\Zend\View\ViewEvent $event) use (&$renderer, &$callbackHandler) {
                 $renderer = $event->getRenderer();
                 $this->view->getEventManager()->detach($callbackHandler);
             });
@@ -97,5 +114,4 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
         $this->resolver = $resolver;
         return $this;
     }
-
 }
