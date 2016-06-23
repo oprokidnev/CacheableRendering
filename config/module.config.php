@@ -19,47 +19,44 @@
 
 namespace Oprokidnev\CacheableRendering;
 
-$defaultAdapter = [
-    'adapter' => [
-        'name' => 'filesystem',
-        'options' => [
-            'ttl' => 86400,
-            'namespace' => 'oprokidnev-cache-rendering',
-            'cache_dir' => 'data/cacheable-rendering',
-            'dir_permission' => 0770,
-            'file_permission' => 0660,
-        ],
-    ],
-    'plugins' => [
-        'serializer',
-    ],
-];
-
 return [
     'service_manager' => [
-    ],
-    'view_helpers' => [
         'factories' => [
+            \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class => [
+                \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class, 'createViaServiceManager'
+            ],
+            \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class => [
+                \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class, 'createViaServiceManager'
+            ],
+        ],
+    ],
+    'view_manager'=>[
+        'strategies'=>[
+            \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class
+        ],
+    ],
+    'view_helpers'    => [
+        'factories'  => [
             'cachedCallback' => [ View\Helper\Callback::class, 'createViaViewHelperManager'],
-            'cachedPartial' => [ View\Helper\Partial::class, 'createViaViewHelperManager'],
+            'cachedPartial'  => [ View\Helper\Partial::class, 'createViaViewHelperManager'],
         ],
         'delegators' => [
-            'headScript' => [
+            'headScript'   => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headLink' => [
+            'headLink'     => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headStyle' => [
+            'headStyle'    => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headMeta' => [
+            'headMeta'     => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
             'inlineScript' => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'placeholder' => [
+            'placeholder'  => [
                 View\Helper\Placeholder\PlaceholderDelegatorFactory::class,
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class,
             ],

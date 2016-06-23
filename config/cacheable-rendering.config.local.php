@@ -21,12 +21,12 @@ namespace Oprokidnev\CacheableRendering;
 
 $defaultAdapter = [
     'adapter' => [
-        'name' => 'filesystem',
+        'name'    => 'filesystem',
         'options' => [
-            'ttl' => 86400,
-            'namespace' => 'oprokidnev-cache-rendering',
-            'cache_dir' => 'data/cacheable-rendering',
-            'dir_permission' => 0770,
+            'ttl'             => 86400,
+            'namespace'       => 'oprokidnev-cache-rendering',
+            'cache_dir'       => 'data/cacheable-rendering',
+            'dir_permission'  => 0770,
             'file_permission' => 0660,
         ],
     ],
@@ -39,8 +39,9 @@ return [
     'oprokidnev' => [
         'cacheable-rendering' => [
             'adapters' => [
-                View\Helper\Callback::class => $defaultAdapter,
-                View\Helper\Partial::class => $defaultAdapter,
+                View\Helper\Callback::class        => $defaultAdapter,
+                View\Helper\Partial::class         => $defaultAdapter,
+                View\Renderer\CacheRenderer::class => $defaultAdapter,
             ],
         ],
     ],
