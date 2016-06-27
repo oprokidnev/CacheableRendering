@@ -19,7 +19,6 @@
 
 namespace Oprokidnev\CacheableRendering\View\Renderer;
 
-\Zend\View\Renderer\PhpRenderer::class;
 
 /**
  * CacheRenderer

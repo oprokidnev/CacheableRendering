@@ -4,8 +4,11 @@ Gives a set of utils for html cache with placeholder calls state restore.
 
 ## Installation
 
-Initialize module in application.config.php and at first run you will get a new file in config/autoload named `cacheable-rendering.config.local.php`.
-This is the config storage settings. By default I use filesystem cache. You can change this settings by the compatible with \Zend\Cache\StorageFactory::factory method configuration.
+```
+composer require oprokidnev/cacheable-rendering:dev-master
+```
+
+Initialize module `'Oprokidnev\\CacheableRendering'` in application.config.php and run you application once. Then you will get a new file in config/autoload named `cacheable-rendering.config.local.php`. This is the config with storage settings. By default I choose use filesystem cache adapter, but you can change this settings with the compatible with \Zend\Cache\StorageFactory::factory method array.
 
 ## View helpers
 
@@ -47,3 +50,18 @@ The same as standart partial helper, instead of `$key` parameter in invocation.
 echo $this->cachedPartial($someKey, $locationOrViewModal, $varsOrNothing);
 
 ```
+
+## Renderer (in dev)
+
+### Concept
+
+Cache view model result to html with inner placeholder calls restore.
+
+### View model rendering
+
+In cases of cheap controller view model generation strategies you can easily provide you ViewModel with 
+`cache_by_key` (Oprokidnev\CacheableRendering\View\Model::CACHE_PARAMETER_NAME) parameter. If render strategy find such models it will redirect view event to cache renderer and will try to inject a rendering result from cache. 
+
+### Todos
+
+ - Create a lazy loading view model, that can be transformed to every other ViewModel handled by other renderers.
