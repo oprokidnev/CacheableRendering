@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -42,19 +41,34 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
      */
     public function onMergeConfig(\Zend\ModuleManager\ModuleEvent $e)
     {
+
+        $configListener = $e->getConfigListener();
+        $config = $configListener->getMergedConfig(false);
+
+        /**
+         * Handle autoloaded config for a first time
+         */
         $cacheConfigLocation = './config/autoload/cacheable-rendering.config.local.php';
         if (!file_exists($cacheConfigLocation)) {
-            copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php',
-                $cacheConfigLocation);
-            mkdir('data/cacheable-rendering');
-            $cacheConfig    = require $cacheConfigLocation;
-            $configListener = $e->getConfigListener();
+            
+            copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php', $cacheConfigLocation);
+
+            if (!file_exists('./data/cacheable-rendering')) {
+                mkdir('./data/cacheable-rendering');
+            }
+            
+            $cacheConfig = require $cacheConfigLocation;
 
             $config = \Zend\Stdlib\ArrayUtils::merge($configListener->getMergedConfig(false),
                     $cacheConfig);
-
-            $configListener->setMergedConfig($config);
         }
+        if (@$config['oprokidnev']['cacheable-rendering']['use_lazy_factories']) {
+            $lazyServiceConfig = require __DIR__ . '/../../../config/lazy-services.module.php';
+            $config            = \Zend\Stdlib\ArrayUtils::merge($configListener->getMergedConfig(false),
+                    $lazyServiceConfig);
+        }
+
+        $configListener->setMergedConfig($config);
     }
 
     /**

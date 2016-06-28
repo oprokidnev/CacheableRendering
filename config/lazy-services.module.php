@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,31 +18,29 @@
 
 namespace Oprokidnev\CacheableRendering;
 
-$defaultAdapter = [
-    'adapter' => [
-        'name'    => 'filesystem',
-        'options' => [
-            'ttl'             => 86400,
-            'namespace'       => 'oprokidnev-cache-rendering',
-            'cache_dir'       => 'data/cacheable-rendering',
-            'dir_permission'  => 0770,
-            'file_permission' => 0660,
-        ],
-    ],
-    'plugins' => [
-        'serializer',
-    ],
-];
+use Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer;
+use Zend\ServiceManager\Proxy\LazyServiceFactory;
+use Zend\ServiceManager\Proxy\LazyServiceFactoryFactory;
 
 return [
-    'oprokidnev' => [
-        'cacheable-rendering' => [
-            'use_lazy_factories'=>true,
-            'adapters' => [
-                View\Helper\Callback::class        => $defaultAdapter,
-                View\Helper\Partial::class         => $defaultAdapter,
-                View\Renderer\CacheRenderer::class => $defaultAdapter,
+    'service_manager' => [
+        'factories' => [
+//            LazyServiceFactory::class => LazyServiceFactoryFactory::class,
+        ],
+        'delegators' => [
+            CacheRenderer::class => [
+                LazyServiceFactory::class,
             ],
+        ],
+        'lazy_services' => [
+            'class_map' => [
+                CacheRenderer::class => CacheRenderer::class
+            ],
+        ],
+    ],
+    'lazy_services' => [
+        'class_map' => [
+            CacheRenderer::class => CacheRenderer::class
         ],
     ],
 ];
