@@ -26,5 +26,10 @@
         "psr-4": {
             "Oprokidnev\\CacheableRendering\\": "src/Oprokidnev/CacheableRendering"
         }
+    },
+    "extra": {
+        "zf":{
+            "module":"Oprokidnev\\CacheableRendering"
+        }
     }
 }
