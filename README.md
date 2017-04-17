@@ -1,11 +1,11 @@
 # Cacheable placeholder module
 
-Gives a set of utils for html cache with placeholder calls state restore.
+Provides a set of utils for html caching including placeholder view helper calls interception and restore.
 
 ## Installation
 
 ```
-composer require oprokidnev/cacheable-rendering:dev-master
+composer require oprokidnev/cacheable-rendering
 ```
 
 Initialize module `'Oprokidnev\\CacheableRendering'` in application.config.php and run you application once. Then you will get a new file in config/autoload named `cacheable-rendering.config.local.php`. This is the config with storage settings. By default I choose use filesystem cache adapter, but you can change this settings with the compatible with \Zend\Cache\StorageFactory::factory method array.
