@@ -18,15 +18,43 @@
  * and is licensed under the MIT license.
  */
 
+namespace Oprokidnev\CacheableRendering\Options;
 
-namespace Oprokidnev\CacheableRendering\View\Helper\Placeholder;
-
-class PlaceholderDelegatorFactory implements \Zend\ServiceManager\Factory\DelegatorFactoryInterface
+/**
+ * ModuleOptions
+ *
+ * @author oprokidnev
+ */
+class ModuleOptions extends \Zend\Stdlib\AbstractOptions
 {
-    public function __invoke(\Interop\Container\ContainerInterface $container, $name, callable $callback, array $options = null)
+    protected $adapters             = [];
+    
+    protected $useLazyFactories     = true;
+    
+    public static function createViaServiceContainer(\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
     {
-        $placeholder = $callback();
-        $instance    = new PlaceholderDelegator();
-        return $instance;
+        return new static($container->get('config')['oprokidnev']['cacheable-rendering']);
+    }
+
+    public function getAdapters()
+    {
+        return $this->adapters;
+    }
+
+    public function getUseLazyFactories()
+    {
+        return $this->useLazyFactories;
+    }
+
+    public function setAdapters($adapters)
+    {
+        $this->adapters = $adapters;
+        return $this;
+    }
+
+    public function setUseLazyFactories($useLazyFactories)
+    {
+        $this->useLazyFactories = $useLazyFactories;
+        return $this;
     }
 }

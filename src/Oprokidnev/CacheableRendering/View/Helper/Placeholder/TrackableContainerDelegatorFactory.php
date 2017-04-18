@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -17,27 +18,25 @@
  * and is licensed under the MIT license.
  */
 
+
 namespace Oprokidnev\CacheableRendering\View\Helper\Placeholder;
 
-class TrackableContainerDelegatorFactory implements \Zend\ServiceManager\DelegatorFactoryInterface
+class TrackableContainerDelegatorFactory implements \Zend\ServiceManager\Factory\DelegatorFactoryInterface
 {
-
-    public function createDelegatorWithName(\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
+    public function __invoke(\Interop\Container\ContainerInterface $container, $name, callable $callback, array $options = null)
     {
         $instance = $callback();
-        /* @var $instance ClassName */
-
+        /* @var $instance \Zend\View\Helper\Placeholder\Container\AbstractStandalone|\Zend\View\Helper\Placeholder */
         if (($instance instanceof \Zend\View\Helper\Placeholder\Container\AbstractStandalone || $instance instanceof \Zend\View\Helper\Placeholder) && isset(TrackableContainer::$nameToContainerClass[$name])) {
             $className = TrackableContainer::$nameToContainerClass[$name];
-            if (method_exists($instance, 'setContainerClass')) {
+            if (\method_exists($instance, 'setContainerClass')) {
                 $instance->setContainerClass($className);
             }
-            if (method_exists($instance, 'setContainer')) {
-                $instance->setContainer(new $className);
+            if (\method_exists($instance, 'setContainer')) {
+                $instance->setContainer(new $className());
             }
 
-            if (method_exists($instance, 'getContainerClass')) {
-                //                dump($instance->getContainerClass());
+            if (\method_exists($instance, 'getContainerClass')) {
             }
         }
         return $instance;

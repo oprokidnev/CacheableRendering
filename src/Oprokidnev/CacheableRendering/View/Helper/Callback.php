@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -16,6 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
+
 
 namespace Oprokidnev\CacheableRendering\View\Helper;
 
@@ -42,44 +44,56 @@ namespace Oprokidnev\CacheableRendering\View\Helper;
 class Callback extends \Zend\View\Helper\AbstractHelper
 {
 
-    public static function createViaViewHelperManager(\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator)
-    {
-        $config = $serviceLocator->getServiceLocator()->get('config');
-        $storageConfig = $config['oprokidnev']['cacheable-rendering']['adapters'][__CLASS__];
-        return new static(\Zend\Cache\StorageFactory::factory($storageConfig));
-    }
-
     /**
      *
-     * @var \Zend\Cache\Storage\AbstractAdapter
+     * @var \Zend\Cache\Storage\StorageInterface
      */
     protected $cacheStorage;
 
     /**
      *
-     * @param \Zend\Cache\Storage\AbstractAdapter $cacheStorage
+     * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
      */
-    public function __construct(\Zend\Cache\Storage\Adapter\AbstractAdapter $cacheStorage)
+    public function __construct(\Zend\Cache\Storage\StorageInterface $cacheStorage)
     {
         $this->cacheStorage = $cacheStorage;
     }
 
-    public function __invoke($key, callable $callback, $groups = ['database'])
+    public function __invoke($key, callable $callback, $cacheTags = ['default'])
     {
         if ($key === null) {
             throw new \Exception('Cached partial rendering is not avaliable without a cache key.');
         }
-        $key = md5($key.strtolower(__CLASS__));
+        
+        $key = \md5($key.\strtolower(__CLASS__));
 
         if ($this->cacheStorage->hasItem($key)) {
             $result = $this->cacheStorage->getItem($key);
             return $result($this->getView());
         }
-        ob_start();
+        \ob_start();
         Placeholder\TrackableContainer::startTracking();
-        $result = (string) $callback();
-        $result.= ob_get_clean();
+        
+        $cacheTags = new \Zend\Stdlib\ArrayObject($cacheTags);
+        $result = \strval($callback($cacheTags));
+        $result.= \ob_get_clean();
+        
         $this->cacheStorage->setItem($key, Result::factory($result, Placeholder\TrackableContainer::stopTracking()));
+        
+        if ($cacheTags->count()  && $this->cacheStorage instanceof \Zend\Cache\Storage\TaggableInterface) {
+            $this->cacheStorage->setTags($key, \array_unique($cacheTags->getArrayCopy()));
+        }
+        
         return $result;
+    }
+
+    public static function createViaServiceContainer(\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $storageManager = $container->get(\Oprokidnev\CacheableRendering\Cache\StorageManager::class);
+        /* @var $storageConfig \Oprokidnev\CacheableRendering\Cache\StorageManager::class */
+        
+        
+        $adapter = $storageManager->getAdapter($requestedName);
+        return new static($adapter);
     }
 }

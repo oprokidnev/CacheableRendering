@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -17,6 +18,7 @@
  * and is licensed under the MIT license.
  */
 
+
 namespace Oprokidnev\CacheableRendering;
 
 $defaultAdapter = [
@@ -24,7 +26,7 @@ $defaultAdapter = [
         'name'    => 'filesystem',
         'options' => [
             'ttl'             => 86400,
-            'namespace'       => 'oprokidnev-cache-rendering',
+            'namespace'       => 'cache-rendering',
             'cache_dir'       => 'data/cacheable-rendering',
             'dir_permission'  => 0770,
             'file_permission' => 0660,

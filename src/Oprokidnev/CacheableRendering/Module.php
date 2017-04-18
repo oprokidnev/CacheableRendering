@@ -1,5 +1,7 @@
 <?php
+
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -41,7 +43,6 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
      */
     public function onMergeConfig(\Zend\ModuleManager\ModuleEvent $e)
     {
-
         $configListener = $e->getConfigListener();
         $config = $configListener->getMergedConfig(false);
 
@@ -49,12 +50,11 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
          * Handle autoloaded config for a first time
          */
         $cacheConfigLocation = './config/autoload/cacheable-rendering.config.local.php';
-        if (!file_exists($cacheConfigLocation)) {
-            
-            copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php', $cacheConfigLocation);
+        if (!\file_exists($cacheConfigLocation)) {
+            \copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php', $cacheConfigLocation);
 
-            if (!file_exists('./data/cacheable-rendering')) {
-                mkdir('./data/cacheable-rendering');
+            if (!\file_exists('./data/cacheable-rendering')) {
+                \mkdir('./data/cacheable-rendering');
             }
             
             $cacheConfig = require $cacheConfigLocation;

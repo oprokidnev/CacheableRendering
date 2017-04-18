@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -16,6 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
+
 
 namespace Oprokidnev\CacheableRendering\View\Renderer;
 
@@ -46,28 +48,8 @@ class Result
     /**
      *
      * @param string $result
-     * @param array $placeholderCalls
-     * @return static
-     */
-    public static function factory($result, $placeholderCalls, $renderer)
-    {
-        return new static($result, $placeholderCalls, $renderer);
-    }
-
-    /**
-     *
-     * @param mixed $var
-     * @return boolean
-     */
-    protected function is_iterable($var)
-    {
-        return (is_array($var) || $var instanceof Traversable);
-    }
-
-    /**
-     *
-     * @param string $result
-     * @param array $placeholderCalls
+     * @param array  $placeholderCalls
+     * @param mixed  $renderer
      */
     public function __construct($result, $placeholderCalls, $renderer)
     {
@@ -77,6 +59,41 @@ class Result
         }
         $this->result = $result;
         $this->renderer = $renderer;
+    }
+
+    /**
+     *
+     * @param \Zend\View\Renderer\RendererInterface $viewHelperPluginManager
+     *
+     * @return string
+     */
+    public function __invoke(\Zend\View\HelperPluginManager $viewHelperPluginManager)
+    {
+        foreach ($this->placeholderCalls as $containerClass => $calls) {
+            foreach ($calls as $call) {
+                list($method, $args, $scope) = $call;
+                if (\method_exists($containerClass, 'getServiceName')) {
+                    $standalonePlaceholder = $viewHelperPluginManager->get($containerClass::getServiceName());
+                    /* @var $standalonePlaceholder \Zend\View\Helper\Placeholder\Container\AbstractStandalone */
+                    \call_user_func([$standalonePlaceholder->getContainer($scope),
+                        $method], $args);
+                }
+            }
+        };
+        return $this->result;
+    }
+
+    /**
+     *
+     * @param string $result
+     * @param array  $placeholderCalls
+     * @param mixed  $renderer
+     *
+     * @return static
+     */
+    public static function factory($result, $placeholderCalls, $renderer)
+    {
+        return new static($result, $placeholderCalls, $renderer);
     }
 
     /**
@@ -100,6 +117,7 @@ class Result
     /**
      *
      * @param string $result
+     *
      * @return static
      */
     public function setResult($result)
@@ -111,6 +129,7 @@ class Result
     /**
      *
      * @param array $placeholderCalls
+     *
      * @return static
      */
     public function setPlaceholderCalls($placeholderCalls)
@@ -121,22 +140,12 @@ class Result
 
     /**
      *
-     * @param \Zend\View\Renderer\RendererInterface $viewHelperPluginManager
-     * @return string
+     * @param mixed $var
+     *
+     * @return bool
      */
-    public function __invoke(\Zend\View\HelperPluginManager $viewHelperPluginManager)
+    protected function is_iterable($var)
     {
-        foreach ($this->placeholderCalls as $containerClass => $calls) {
-            foreach ($calls as $call) {
-                list($method, $args, $scope) = $call;
-                if (method_exists($containerClass, 'getServiceName')) {
-                    $standalonePlaceholder = $viewHelperPluginManager->get($containerClass::getServiceName());
-                    /* @var $standalonePlaceholder \Zend\View\Helper\Placeholder\Container\AbstractStandalone */
-                    call_user_func([$standalonePlaceholder->getContainer($scope),
-                        $method], $args);
-                }
-            }
-        };
-        return $this->result;
+        return (\is_array($var) || $var instanceof Traversable);
     }
 }

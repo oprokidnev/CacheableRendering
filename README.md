@@ -5,7 +5,7 @@ Provides a set of utils for html caching including placeholder view helper calls
 ## Installation
 
 ```
-composer require oprokidnev/cacheable-rendering
+composer require oprokidnev/cacheable-rendering:^2.0
 ```
 
 Initialize module `'Oprokidnev\\CacheableRendering'` in application.config.php and run you application once. Then you will get a new file in config/autoload named `cacheable-rendering.config.local.php`. This is the config with storage settings. By default I choose use filesystem cache adapter, but you can change this settings with the compatible with \Zend\Cache\StorageFactory::factory method array.
@@ -26,18 +26,20 @@ $key = $_SERVER['REQUEST_URI'];
 /*
  * Cache big array rendering operation into html.
  */
-$this->cachedCallback($key, function () use ($serviceFromController) {
+echo $this->cachedCallback($key, function ($cacheTags) use ($serviceFromController) { ?>
     <?php foreach($veryBigIteratorWithLazyLoading->getItems() as $item): ?>
         <div class="item"><?= $item->getName()?></div>
     <?php endforeach; ?>
-    <?php $this->placeholder('modals')->captureStart(); ?>
+    <?php $this->placeholder('modals')->captureStart(); // placeholder call happens here ?>
     <div class="modal">
         <!-- Some modal body, that will be restored on cache read -->
     </div>
     <?php $this->placeholder('modals')->captureEnd(); ?>
     <?php
+    $cacheTags[] = 'database_cache';
     return 'Some finish message';
-})
+}); ?>
+
 ```
 
 
@@ -50,18 +52,3 @@ The same as standart partial helper, instead of `$key` parameter in invocation.
 echo $this->cachedPartial($someKey, $locationOrViewModal, $varsOrNothing);
 
 ```
-
-## Renderer (in dev)
-
-### Concept
-
-Cache view model result to html with inner placeholder calls restore.
-
-### View model rendering
-
-In cases of cheap controller view model generation strategies you can easily provide you ViewModel with 
-`cache_by_key` (Oprokidnev\CacheableRendering\View\Model::CACHE_PARAMETER_NAME) parameter. If render strategy find such models it will redirect view event to cache renderer and will try to inject a rendering result from cache. 
-
-### Todos
-
- - Create a lazy loading view model, that can be transformed to every other ViewModel handled by other renderers.

@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -20,18 +21,12 @@
 namespace Oprokidnev\CacheableRendering\View\Strategy;
 
 /**
- * Description of CacheableStrategy
+ * CacheStrategy
  *
  * @author oprokidnev
  */
 class CacheStrategy extends \Zend\EventManager\AbstractListenerAggregate
 {
-
-    public static function createViaServiceManager(\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator)
-    {
-        $cacheRenderer = $serviceLocator->get(\Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class);
-        return new static($cacheRenderer);
-    }
 
     /**
      * @var \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer
@@ -41,11 +36,17 @@ class CacheStrategy extends \Zend\EventManager\AbstractListenerAggregate
     /**
      * Constructor
      *
-     * @param  \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer $renderer
+     * @param \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer $renderer
      */
     public function __construct(\Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer $renderer)
     {
         $this->renderer = $renderer;
+    }
+
+    public static function createViaServiceContainer(\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $cacheRenderer = $container->get(\Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class);
+        return new static($cacheRenderer);
     }
 
     /**
@@ -71,7 +72,8 @@ class CacheStrategy extends \Zend\EventManager\AbstractListenerAggregate
      * Select the PhpRenderer; typically, this will be registered last or at
      * low priority.
      *
-     * @param  \Zend\View\ViewEvent $e
+     * @param \Zend\View\ViewEvent $e
+     *
      * @return \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer
      */
     public function selectRenderer(\Zend\View\ViewEvent $e)
@@ -79,7 +81,6 @@ class CacheStrategy extends \Zend\EventManager\AbstractListenerAggregate
         if ($e->getModel() && $e->getModel()->getVariable(\Oprokidnev\CacheableRendering\View\Model\CacheModelInterface::CACHE_PARAMETER_NAME) !== null) {
             return $this->renderer;
         }
-        return;
     }
 
     /**
@@ -89,6 +90,7 @@ class CacheStrategy extends \Zend\EventManager\AbstractListenerAggregate
      * results.
      *
      * @param \Zend\View\ViewEvent $e
+     *
      * @return void
      */
     public function injectResponse(\Zend\View\ViewEvent $e)

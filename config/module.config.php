@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -22,41 +23,51 @@ namespace Oprokidnev\CacheableRendering;
 return [
     'service_manager' => [
         'factories' => [
-            \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class => [
-                \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer::class, 'createViaServiceManager'
+            View\Renderer\CacheRenderer::class => [
+                View\Renderer\CacheRenderer::class, 'createViaServiceContainer'
             ],
-            \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class => [
-                \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class, 'createViaServiceManager'
+            View\Strategy\CacheStrategy::class => [
+                View\Strategy\CacheStrategy::class, 'createViaServiceContainer'
+            ],
+            Options\ModuleOptions::class       => [
+                Options\ModuleOptions::class, 'createViaServiceContainer'
+            ],
+            Cache\StorageManager::class        => [
+                Cache\StorageManager::class, 'createViaServiceContainer'
             ],
         ],
     ],
-    'view_manager'=>[
-        'strategies'=>[
+    'view_manager'    => [
+        'strategies' => [
             \Oprokidnev\CacheableRendering\View\Strategy\CacheStrategy::class
         ],
     ],
     'view_helpers'    => [
         'factories'  => [
-            'cachedCallback' => [ View\Helper\Callback::class, 'createViaViewHelperManager'],
-            'cachedPartial'  => [ View\Helper\Partial::class, 'createViaViewHelperManager'],
+            View\Helper\Callback::class => [View\Helper\Callback::class, 'createViaServiceContainer'],
+            View\Helper\Partial::class  => [View\Helper\Partial::class, 'createViaServiceContainer'],
+        ],
+        'aliases'    => [
+            'cachedCallback' => View\Helper\Callback::class,
+            'cachedPartial'  => View\Helper\Partial::class,
         ],
         'delegators' => [
-            'headScript'   => [
+            \Zend\View\Helper\HeadScript::class  => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headLink'     => [
+            \Zend\View\Helper\HeadLink::class     => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headStyle'    => [
+            \Zend\View\Helper\HeadStyle::class   => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'headMeta'     => [
+            \Zend\View\Helper\HeadMeta::class    => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'inlineScript' => [
+            \Zend\View\Helper\InlineScript::class => [
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class
             ],
-            'placeholder'  => [
+            \Zend\View\Helper\Placeholder::class  => [
                 View\Helper\Placeholder\PlaceholderDelegatorFactory::class,
                 View\Helper\Placeholder\TrackableContainerDelegatorFactory::class,
             ],

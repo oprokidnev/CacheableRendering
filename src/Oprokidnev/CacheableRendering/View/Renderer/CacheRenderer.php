@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -17,8 +18,8 @@
  * and is licensed under the MIT license.
  */
 
-namespace Oprokidnev\CacheableRendering\View\Renderer;
 
+namespace Oprokidnev\CacheableRendering\View\Renderer;
 
 /**
  * CacheRenderer
@@ -46,12 +47,7 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
      */
     protected $viewHelperPluginManager = null;
 
-    public static function createViaServiceManager(\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator)
-    {
-        $config        = $serviceLocator->get('config');
-        $storageConfig = $config['oprokidnev']['cacheable-rendering']['adapters'][__CLASS__];
-        return new static(\Zend\Cache\StorageFactory::factory($storageConfig), $serviceLocator->get(\Zend\View\View::class), $serviceLocator->get('ViewHelperManager'));
-    }
+    protected $resolver = null;
 
     public function __construct($cacheStorage, $view, $viewHelperPluginManager)
     {
@@ -60,9 +56,14 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
         $this->viewHelperPluginManager = $viewHelperPluginManager;
     }
 
+    public static function createViaServiceContainer(\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $adapter        = $container->get(\Oprokidnev\CacheableRendering\Cache\StorageManager::class)->getAdapter(__CLASS__);
+        return new static($adapter, $container->get(\Zend\View\View::class), $container->get('ViewHelperManager'));
+    }
+
     public function getEngine()
     {
-        return;
     }
 
     public function render($nameOrModel, $values = null)
@@ -85,27 +86,25 @@ class CacheRenderer implements \Zend\View\Renderer\RendererInterface
 
             $callbackHandler = $this->view->getEventManager()
                 ->attach(\Zend\View\ViewEvent::EVENT_RENDERER_POST, function (\Zend\View\ViewEvent $event) use (&$renderer, &$callbackHandler) {
-                $renderer = $event->getRenderer();
-                $this->view->getEventManager()->detach($callbackHandler);
-            });
+                    $renderer = $event->getRenderer();
+                    $this->view->getEventManager()->detach($callbackHandler);
+                });
 
             $nameOrModel->setOption('has_parent', true);
             $result = $this->view->render($nameOrModel);
 
 
-            $this->cacheStorage->setItem($cacheKey, Result::factory($result, \Oprokidnev\CacheableRendering\View\Helper\Placeholder\TrackableContainer::stopTracking(), get_class($renderer)));
+            $this->cacheStorage->setItem($cacheKey, Result::factory($result, \Oprokidnev\CacheableRendering\View\Helper\Placeholder\TrackableContainer::stopTracking(), \get_class($renderer)));
 
             return $result;
-        } else {
-            dump('Cant render model by templat location');
         }
+        echo('Cant render model by template location');
     }
 
-    protected $resolver = null;
-
     /**
-     * 
+     *
      * @param \Zend\View\Resolver\ResolverInterface $resolver
+     *
      * @return \Oprokidnev\CacheableRendering\View\Renderer\CacheRenderer
      */
     public function setResolver(\Zend\View\Resolver\ResolverInterface $resolver)

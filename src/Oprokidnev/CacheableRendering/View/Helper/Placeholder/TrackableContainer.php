@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -17,57 +18,46 @@
  * and is licensed under the MIT license.
  */
 
+
 namespace Oprokidnev\CacheableRendering\View\Helper\Placeholder;
+
+use Zend\View\Helper as ViewHelper;
 
 abstract class TrackableContainer extends \Zend\View\Helper\Placeholder\Container
 {
     public static $nameToContainerClass = [
-        'headscript' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\HeadScript',
-        'headlink' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\HeadLink',
-        'headmeta' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\HeadMeta',
-        'inlinescript' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\InlineScript',
-        'headstyle' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\HeadStyle',
-        'placeholder' => 'Oprokidnev\\CacheableRendering\\View\\Helper\\Placeholder\\TrackableContainer\\Placeholder',
+        ViewHelper\HeadScript::class => TrackableContainer\HeadScript::class,
+        ViewHelper\HeadLink::class => TrackableContainer\HeadLink::class,
+        ViewHelper\HeadMeta::class => TrackableContainer\HeadMeta::class,
+        ViewHelper\InlineScript::class => TrackableContainer\InlineScript::class,
+        ViewHelper\HeadStyle::class => TrackableContainer\HeadStyle::class,
+        ViewHelper\Placeholder::class => TrackableContainer\Placeholder::class,
     ];
+    
     protected $placeholderName          = null;
     protected static $trackingEnabled   = [
         false
     ];
+    
     protected static $tracker           = [];
     protected static $nesting           = 0;
 
-    public static function getServiceName()
-    {
-    }
+    abstract public static function getServiceName();
 
     public static function startTracking()
     {
         static::$nesting++;
         static::$trackingEnabled[static::$nesting] = true;
-//        dump('Nesting start '.static::$nesting);
         static::$tracker[static::$nesting]         = [];
     }
 
     public static function stopTracking()
     {
-        //        dump('Nesting stop '.static::$nesting);
         static::$trackingEnabled[static::$nesting] = false;
         $result                                    = static::$tracker[static::$nesting];
         static::$nesting                           = static::$nesting === 0 ? 0 : static::$nesting
             - 1;
         return $result;
-    }
-
-    protected function track($name, $arguments)
-    {
-        foreach (range(static::$nesting, 0, -1) as $nest) {
-            if (static::$trackingEnabled[$nest]) {
-                static::$tracker[$nest][get_class($this)][] = [$name, $arguments,
-                    $this->placeholderName];
-            }
-        }
-
-        return $this;
     }
 
     public function setPlaceholderName($placeholderName)
@@ -92,5 +82,17 @@ abstract class TrackableContainer extends \Zend\View\Helper\Placeholder\Containe
     {
         $this->track(__FUNCTION__, $value);
         return parent::set($value);
+    }
+
+    protected function track($name, $arguments)
+    {
+        foreach (\range(static::$nesting, 0, -1) as $nest) {
+            if (static::$trackingEnabled[$nest]) {
+                static::$tracker[$nest][\get_class($this)][] = [$name, $arguments,
+                    $this->placeholderName];
+            }
+        }
+
+        return $this;
     }
 }
