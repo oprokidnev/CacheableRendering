@@ -64,3 +64,5 @@ Good for the cases, when *cachedCallback* closure will require big amount of sco
     some havy output action here.
 <?php endwhile; ?>
 ```
+
+## Interacting with cache storages

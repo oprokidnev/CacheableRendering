@@ -69,15 +69,16 @@ class Capture extends \Zend\View\Helper\AbstractHelper
             return false; // stop
         }
 
-        if (!in_array($key, $this->captureStarted)) {
+        if (!\in_array($key, $this->captureStarted)) {
             $this->captureStarted[] = $key;
 
             \ob_start();
             Placeholder\TrackableContainer::startTracking();
 
-            return in_array($key, $this->captureStarted); //execuure some code and wait for next iteration
+            return \in_array($key, $this->captureStarted); //execute some code and wait for next iteration
         }
-        $this->captureStarted = array_diff($this->captureStarted, [$key]);
+        
+        $this->captureStarted = \array_diff($this->captureStarted, [$key]);
 
         $result = Result::factory(\ob_get_clean(), Placeholder\TrackableContainer::stopTracking());
 
@@ -88,10 +89,7 @@ class Capture extends \Zend\View\Helper\AbstractHelper
 
         echo $result($this->getView());
 
-        return in_array($key, $this->captureStarted);
-        
-
-        return false;
+        return \in_array($key, $this->captureStarted); // stop execution
     }
 
 
