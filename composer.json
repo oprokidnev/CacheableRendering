@@ -29,6 +29,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
         "zf":{
             "module":"Oprokidnev\\CacheableRendering"
         }
