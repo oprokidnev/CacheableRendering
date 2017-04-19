@@ -21,6 +21,10 @@
 
 namespace Oprokidnev\CacheableRendering;
 
+if(!is_dir('data/cacheable-rendering')){
+    mkdir('data/cacheable-rendering', 0770);
+}
+
 $defaultAdapter = [
     'adapter' => [
         'name'    => 'filesystem',
