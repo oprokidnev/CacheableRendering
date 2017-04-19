@@ -44,6 +44,7 @@ return [
             'adapters' => [
                 View\Helper\Callback::class        => $defaultAdapter,
                 View\Helper\Partial::class         => $defaultAdapter,
+                View\Helper\Capture::class         => $defaultAdapter,
                 View\Renderer\CacheRenderer::class => $defaultAdapter,
             ],
         ],

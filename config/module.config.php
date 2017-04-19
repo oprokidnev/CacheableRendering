@@ -46,10 +46,12 @@ return [
         'factories'  => [
             View\Helper\Callback::class => [View\Helper\Callback::class, 'createViaServiceContainer'],
             View\Helper\Partial::class  => [View\Helper\Partial::class, 'createViaServiceContainer'],
+            View\Helper\Capture::class  => [View\Helper\Capture::class, 'createViaServiceContainer'],
         ],
         'aliases'    => [
             'cachedCallback' => View\Helper\Callback::class,
             'cachedPartial'  => View\Helper\Partial::class,
+            'cachedCapture'  => View\Helper\Capture::class,
         ],
         'delegators' => [
             \Zend\View\Helper\HeadScript::class  => [
