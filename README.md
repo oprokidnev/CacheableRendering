@@ -52,3 +52,15 @@ The same as standart partial helper, instead of `$key` parameter in invocation.
 echo $this->cachedPartial($someKey, $locationOrViewModal, $varsOrNothing);
 
 ```
+
+### CachedCapture
+
+Encapsulates expensive output action inside *while* code block.
+Good for the cases, when *cachedCallback* closure will require big amount of scope variables.
+
+```php
+<?php while ($this->cachedCapture($key  = 'capture', $tags = ['default'])): ?>
+    <?php sleep(1); ?>
+    some havy output action here.
+<?php endwhile; ?>
+```
