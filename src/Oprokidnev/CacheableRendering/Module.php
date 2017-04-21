@@ -55,6 +55,7 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
 
             if (!\file_exists('./data/cacheable-rendering')) {
                 \mkdir('./data/cacheable-rendering');
+                file_put_contents('./data/cacheable-rendering/.gitignore', '*'.PHP_EOL.'!.gitignore');
             }
             
             $cacheConfig = require $cacheConfigLocation;
