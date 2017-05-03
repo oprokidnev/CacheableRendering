@@ -50,6 +50,7 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
          * Handle autoloaded config for a first time
          */
         $cacheConfigLocation = './config/autoload/cacheable-rendering.config.local.php';
+        $config = $configListener->getMergedConfig(false);
         if (!\file_exists($cacheConfigLocation)) {
             \copy(__DIR__ . '/../../../config/cacheable-rendering.config.local.php', $cacheConfigLocation);
 
@@ -59,13 +60,12 @@ class Module implements \Zend\ModuleManager\Feature\ConfigProviderInterface
             }
             
             $cacheConfig = require $cacheConfigLocation;
-
-            $config = \Zend\Stdlib\ArrayUtils::merge($configListener->getMergedConfig(false),
+            $config = \Zend\Stdlib\ArrayUtils::merge($config,
                     $cacheConfig);
         }
         if (@$config['oprokidnev']['cacheable-rendering']['use_lazy_factories']) {
             $lazyServiceConfig = require __DIR__ . '/../../../config/lazy-services.module.php';
-            $config            = \Zend\Stdlib\ArrayUtils::merge($configListener->getMergedConfig(false),
+            $config            = \Zend\Stdlib\ArrayUtils::merge($config,
                     $lazyServiceConfig);
         }
 
