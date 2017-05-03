@@ -86,8 +86,7 @@ class Capture extends \Zend\View\Helper\AbstractHelper
         if ($cacheTags && $this->cacheStorage instanceof \Zend\Cache\Storage\TaggableInterface) {
             $this->cacheStorage->setTags($key, $cacheTags);
         }
-
-        echo $result($this->getView());
+        echo $result->getResult();
 
         return \in_array($key, $this->captureStarted); // stop execution
     }
