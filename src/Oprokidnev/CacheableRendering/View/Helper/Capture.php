@@ -70,23 +70,23 @@ class Capture extends \Zend\View\Helper\AbstractHelper
         }
 
         if (!\in_array($key, $this->captureStarted)) {
-            $this->captureStarted[] = $key;
+            $this->captureStarted[] = $key;  // start capturing by key 
 
             \ob_start();
             Placeholder\TrackableContainer::startTracking();
 
-            return \in_array($key, $this->captureStarted); //execute some code and wait for next iteration
+            return \in_array($key, $this->captureStarted); // execute some code and wait for next iteration
         }
         
-        $this->captureStarted = \array_diff($this->captureStarted, [$key]);
+        $this->captureStarted = \array_diff($this->captureStarted, [$key]); // stop capturing by key 
 
-        $result = Result::factory(\ob_get_clean(), Placeholder\TrackableContainer::stopTracking());
+        $result = \ob_get_clean();
 
-        $this->cacheStorage->setItem($key, $result);
+        $this->cacheStorage->setItem($key, Result::factory($result, Placeholder\TrackableContainer::stopTracking()));
         if ($cacheTags && $this->cacheStorage instanceof \Zend\Cache\Storage\TaggableInterface) {
             $this->cacheStorage->setTags($key, $cacheTags);
         }
-        echo $result->getResult();
+        echo $result; // flush buffer
 
         return \in_array($key, $this->captureStarted); // stop execution
     }
