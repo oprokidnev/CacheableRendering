@@ -64,10 +64,27 @@ class StorageManager
         return $this->adapters[$serviceName];
     }
 
+    /**
+     *
+     * Flush data from all registered adapters
+     */
+    public function flushAll()
+    {
+        foreach ($this->moduleOptions->getAdapters() as $serviceName => $arapterConfig) {
+            $adapter = $this->getAdapter($serviceName);
+            if ($adapter instanceof \Zend\Cache\Storage\FlushableInterface) {
+                $adapter->flush();
+            }
+        }
+    }
+
+    /**
+     * @param array $tags
+     */
     public function clearByTags($tags)
     {
         foreach ($this->moduleOptions->getAdapters() as $serviceName => $arapterConfig) {
-            $adapter=$this->getAdapter($serviceName);
+            $adapter = $this->getAdapter($serviceName);
             if ($adapter instanceof \Zend\Cache\Storage\TaggableInterface) {
                 $adapter->clearByTags((array) $tags, false);
             }
